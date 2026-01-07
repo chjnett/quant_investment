@@ -1,0 +1,9 @@
+pandas
+langgraph
+langchain
+langchain-openai
+psycopg2-binary
+python-dotenv
+yfinance
+requests
+flask
