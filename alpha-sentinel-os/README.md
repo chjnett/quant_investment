@@ -36,16 +36,36 @@ docker exec -it alpha-sentinel-db psql -U user -d alpha_sentinel
   - `-U user`: 사용자 이름 (기본값: user)
   - `-d alpha_sentinel`: 데이터베이스 이름 (기본값: alpha_sentinel)
 
-### 방법 B: 외부 DB 클라이언트 사용 (DBeaver, TablePlus 등)
-로컬 PC에 설치된 데이터베이스 관리 도구를 사용하여 접속할 때 아래 정보를 사용하세요.
+### 방법 B: DBeaver 연결 가이드 (권장)
 
-| 설정 항목 | 값 (Value) | 비고 |
-| --- | --- | --- |
-| **Host** | `localhost` | |
-| **Port** | `5432` | `docker-compose.yml`의 ports 설정 참고 |
-| **Database** | `alpha_sentinel` | 환경변수 `POSTGRES_DB` 값 |
-| **User** | `user` | 환경변수 `POSTGRES_USER` 값 |
-| **Password** | `password` | 환경변수 `POSTGRES_PASSWORD` 값 |
+DBeaver를 사용하여 Docker에 실행 중인 PostgreSQL에 접속하는 상세 방법입니다.
+
+1. **DBeaver 실행 및 새 연결 생성**
+   - 상단 메뉴에서 `Database` -> `New Database Connection` 선택 (또는 플러그 아이콘 클릭).
+   - `PostgreSQL` 아이콘 선택 후 `Next` 클릭.
+
+2. **Connection Settings (연결 설정) 입력**
+   `Main` 탭에서 다음 정보를 입력합니다:
+
+   | 항목 (Field) | 입력값 (Input) | 설명 |
+   | --- | --- | --- |
+   | **Host** | `localhost` | 로컬 환경의 Docker 포트로 접속 |
+   | **Port** | `5432` | `docker-compose.yml`의 `ports` 설정과 일치해야 함 |
+   | **Database** | `alpha_sentinel` | 기본 DB 이름 |
+   | **Username** | `user` | 기본 사용자 이름 |
+   | **Password** | `password` | 기본 비밀번호 |
+
+3. **Driver Properties (드라이버 속성) 확인** (필요시)
+   - 보통 기본 설정으로 작동하지만, 접속이 안 될 경우 `Driver Properties` 탭에서 SSL 모드가 `disable`인지 확인해보세요 (로컬 개발 환경).
+
+4. **Test Connection (연결 테스트)**
+   - 설정 창 하단의 `Test Connection ...` 버튼을 클릭합니다.
+   - `Connected` 성공 메시지가 뜨면 `Finish`를 눌러 저장합니다.
+
+5. **트러블슈팅 (접속 실패 시)**
+   - **Connection refused**: 도커 컨테이너가 켜져 있는지 확인하세요 (`docker ps`).
+   - **Authentication failed**: `.env` 파일이나 `docker-compose.yml`의 환경변수 비밀번호가 맞는지 확인하세요.
+   - **Port conflict**: 이미 로컬에 다른 PostgreSQL이 5432 포트를 쓰고 있다면, `docker-compose.yml`에서 포트 매핑을 `"5433:5432"` 처럼 변경하고 DBeaver에서도 5433으로 접속해야 합니다.
 
 ## 4. 환경 변수 설정 (Configuration)
 
