@@ -1,42 +1,27 @@
-
-
 # [PRD] AI 에이전트 기반 장기 퀀트 투자 시스템: Alpha Sentinel OS
-
 ## 1. 프로젝트 개요 (Project Overview)
-
 * **제품명**: Alpha Sentinel OS
 * **목표**: 2~3년 단위의 장기 투자를 위해 거시 경제 지표부터 기업의 정성적 공시 데이터까지 통합 분석하여, 감정을 배제한 최적의 포트폴리오를 제안하고 관리하는 AI 에이전트 시스템 구축.
 * **대상 유저**: 데이터 기반의 가치 투자를 지향하며, 인프라 비용 부담 없이 클라우드 환경에서 자동화 시스템을 운영하고자 하는 개인 투자자.
-
 ## 2. 핵심 투자 철학 (Core Philosophy)
-
 1. **Top-Down Priority**: 거시 경제가 무너진 시장(Crisis)에서는 개별 종목의 우량함보다 '생존'과 '현금화'가 우선이다.
 2. **Hybrid Alpha**: 전통적 퀀트의 수치 데이터(PBR, ROE 등)에 LLM의 비정형 데이터(공시 뉘앙스, 뉴스 감성) 해석력을 더해 초과 수익을 창출한다.
 3. **Thesis-Driven Exit**: 매수 가격이 아닌, 매수 당시 설정한 '투자 가설'이 깨졌을 때 기계적으로 매도한다.
-
 ## 3. 기능 요구사항 (Functional Requirements)
-
 ### 3.1. 멀티 에이전트 추론 체인 (LangGraph)
-
 * **Macro Sentry**: FRED/yfinance 데이터를 분석하여 투자 가능 여부(Risk-On/Off) 판정 및 글로벌 킬스위치 가동.
 * **Sector Strategist**: 현재 거시 환경에 가장 유리한 업종(Sector) 및 ETF 모멘텀 분석.
 * **Fundamental Engine (Pandas)**: AI 개입 없이 코드로만 GPA, PBR, 부채비율 등 수치 지표 계산 및 후보군 스크리닝.
 * **Insight Analyst (NLP)**: 후보 종목의 사업보고서 내 'MD&A' 섹션을 분석하여 경영진의 자신감 및 잠재 리스크 수치화.
 * **CIO Agent**: 모든 데이터를 종합하여 최종 포트폴리오 비중을 결정하고 투자 가설 리포트 생성.
-
 ### 3.2. 데이터 파이프라인 및 비동기 처리
-
 * **Atomic Task Chaining**: Vercel의 60초 타임아웃을 극복하기 위해 분석 단계를 독립된 함수로 분리하고 DB를 통해 상태를 전이함.
 * **Idempotency Logic**: 네트워크 오류로 중단 시 마지막 성공 지점부터 재개하는 멱등성 보장.
 * **Data Scraper**: 월간(거시), 분기(재무), 주간(시세) 단위의 스케줄링 수집.
-
 ### 3.3. 투자 가설 관리 (Hypothesis Tracker)
-
 * **Snapshot**: 매수 시점의 재무 수치와 AI가 분석한 정성적 이유를 JSONB 형식으로 기록.
 * **Quarterly Audit**: 실적 발표마다 AI가 가설 준수 여부를 자동 체크하여 '가설 유지/매도' 의견 제시.
-
 ## 4. 기술 아키텍처 (Technical Architecture)
-
 * **Frontend**: Next.js (App Router), Tailwind CSS (Shadcn UI).
 * **Backend**: Vercel Python Runtime (Serverless Functions), LangGraph.
 * **Database**: **Neon PostgreSQL (Region: Asia Pacific - Singapore)**.

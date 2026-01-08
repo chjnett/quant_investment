@@ -1,0 +1,19 @@
+# 백엔드 도커파일
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# 시스템 의존성 설치가 필요하면 주석 풀고 쓰면 됨 (예: psycopg2 관련)
+# RUN apt-get update && apt-get install -y libpq-dev gcc
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install flask
+
+COPY . .
+
+ENV FLASK_APP=api/index.py
+
+EXPOSE 8000
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
