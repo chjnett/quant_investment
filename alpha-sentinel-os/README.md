@@ -50,7 +50,7 @@ DBeaver를 사용하여 Docker에 실행 중인 PostgreSQL에 접속하는 상�
    | 항목 (Field) | 입력값 (Input) | 설명 |
    | --- | --- | --- |
    | **Host** | `localhost` | 로컬 환경의 Docker 포트로 접속 |
-   | **Port** | `5432` | `docker-compose.yml`의 `ports` 설정과 일치해야 함 |
+   | **Port** | `5435` | `docker-compose.yml`의 `ports` 설정(`5435:5432`)에 따름 |
    | **Database** | `alpha_sentinel` | 기본 DB 이름 |
    | **Username** | `user` | 기본 사용자 이름 |
    | **Password** | `password` | 기본 비밀번호 |
@@ -65,7 +65,7 @@ DBeaver를 사용하여 Docker에 실행 중인 PostgreSQL에 접속하는 상�
 5. **트러블슈팅 (접속 실패 시)**
    - **Connection refused**: 도커 컨테이너가 켜져 있는지 확인하세요 (`docker ps`).
    - **Authentication failed**: `.env` 파일이나 `docker-compose.yml`의 환경변수 비밀번호가 맞는지 확인하세요.
-   - **Port conflict**: 이미 로컬에 다른 PostgreSQL이 5432 포트를 쓰고 있다면, `docker-compose.yml`에서 포트 매핑을 `"5433:5432"` 처럼 변경하고 DBeaver에서도 5433으로 접속해야 합니다.
+   - **Port conflict**: `docker-compose.yml`에서 호스트 포트를 `5435`로 변경했으므로, DBeaver에서도 반드시 **5435** 포트를 사용해야 합니다.
 
 ## 4. 환경 변수 설정 (Configuration)
 

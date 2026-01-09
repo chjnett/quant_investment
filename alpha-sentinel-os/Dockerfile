@@ -1,12 +1,12 @@
 # 프론트엔드 도커파일
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # 필요한 의존성만 딱 설치함
 FROM base AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 # 소스 코드가 바뀔 때만 다시 빌드함
 FROM base AS builder
@@ -29,7 +29,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+# COPY --from=builder /app/public ./public
 
 # 이미지 크기 줄이려고 output traces 자동 활용함
 # 참고: https://nextjs.org/docs/advanced-features/output-file-tracing
