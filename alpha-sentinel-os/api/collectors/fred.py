@@ -22,7 +22,9 @@ INDICATORS = {
     "GDP": "Gross Domestic Product",              # GDP
     "UNRATE": "Unemployment Rate",                # 실업률
     "CPIAUCSL": "CPI (Consumer Price Index)",     # 소비자 물가 지수
-    "DGS10": "10-Year Treasury Yield"             # 10년물 국채 금리
+    "DGS10": "10-Year Treasury Yield",            # 10년물 국채 금리
+    "T10Y2Y": "10-Year Minus 2-Year Treasury",    # 장단기 금리차 (중요)
+    "VIXCLS": "CBOE Volatility Index"             # 공포 지수 (중요)
 }
 
 def save_fred_data(engine, series_id, df):

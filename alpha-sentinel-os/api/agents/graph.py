@@ -8,6 +8,8 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from api.agents.state import AgentState
 from api.agents.macro_node import macro_analysis_node
 
+from api.agents.sector_node import sector_strategy_node
+
 load_dotenv()
 
 def build_graph():
@@ -16,11 +18,12 @@ def build_graph():
 
     # 1. 노드 추가
     workflow.add_node("macro_sentry", macro_analysis_node)
+    workflow.add_node("sector_strategist", sector_strategy_node)
 
-    # 2. 엣지 연결 (Start -> Macro -> End)
-    # 지금은 테스트라 바로 끝내지만, 나중엔 Sector -> CIO로 이어짐
+    # 2. 엣지 연결 (Start -> Macro -> Sector -> End)
     workflow.set_entry_point("macro_sentry")
-    workflow.add_edge("macro_sentry", END)
+    workflow.add_edge("macro_sentry", "sector_strategist")
+    workflow.add_edge("sector_strategist", END)
 
     # 3. 컴파일
     app = workflow.compile()
@@ -45,4 +48,5 @@ if __name__ == "__main__":
     print("\n🏁 [Result Summary]")
     print(f"Risk Level: {result.get('market_risk')}")
     print(f"Risk Score: {result.get('risk_score')}")
+    print(f"Target Sectors: {result.get('target_sectors')}")
     print(f"Messages: {result.get('messages')}")

@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# LLM 초기화 (GPT-4o-mini 권장 - 속도/비용 효율)
+# LLM 초기화 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 def fetch_macro_data() -> Dict[str, float]:
@@ -45,7 +45,7 @@ def macro_analysis_node(state: AgentState) -> AgentState:
     [Macro Sentry Node]
     경제 지표를 보고 현재 시장이 'Risk-On'인지 'Risk-Off'인지 판단
     """
-    print("--- 🛡️ Macro Sentry Node Starting ---")
+    print(f"--- Macro Sentry Node Starting ---")
     
     # 1. 최신 데이터 조회
     data = fetch_macro_data()
@@ -54,27 +54,31 @@ def macro_analysis_node(state: AgentState) -> AgentState:
     # 2. LLM에게 판단 요청 (프롬프트 엔지니어링)
     # 장단기 금리차(T10Y2Y)가 음수이거나 실업률이 급등하면 위험 신호
     prompt = f"""
-    You are a professional Macro Economist. Analyze the current US economic indicators to determine the market risk level.
+    You are an aggressive Growth Strategist. Your goal is to find investment opportunities even in challenging markets.
+    Do NOT store cash unless the market is facing an immediate crash (e.g., Financial Crisis level).
     
     Current Indicators:
     - Fed Funds Rate: {data.get('FEDFUNDS', 'N/A')}%
     - Unemployment Rate: {data.get('UNRATE', 'N/A')}%
     - 10Y Treasury Yield: {data.get('DGS10', 'N/A')}%
-    - 10Y-2Y Spread: {data.get('T10Y2Y', 'N/A')} (If negative, recession warning)
+    - 10Y-2Y Spread: {data.get('T10Y2Y', 'N/A')} (Negative is a warning, but not a stop signal if VIX is low)
     - VIX (Fear Index): {data.get('VIXCLS', 'N/A')}
     
-    Based on these numbers, classify the current market status into one of three:
-    1. 'RISK_ON' (Safe to invest aggressively)
-    2. 'NEUTRAL' (Cautious)
-    3. 'RISK_OFF' (Davgerous, Cash is king)
+    Decision Rules:
+    1. If VIX is below 20, lean towards 'RISK_ON' or 'NEUTRAL'.
+    2. Even if the Yield Curve (T10Y2Y) is negative, if Unemployment is stable (< 5.0%), consider it 'NEUTRAL'.
+    3. Only declare 'RISK_OFF' if multiple indicators are flashing red simultaneously (e.g., VIX > 30 AND Unemployment spiking).
     
-    Also provide a risk score from 0.0 (Safe) to 10.0 (Crash imminent).
+    Classify the market status:
+    1. 'RISK_ON' (Aggressive Buy)
+    2. 'NEUTRAL' (Buy with caution / Sector rotation)
+    3. 'RISK_OFF' (Cash is king)
     
     Output Format: RISK_LEVEL | SCORE | REASON
-    Example: RISK_OFF | 8.5 | High inflation and inverted yield curve detected.
+    Example: NEUTRAL | 4.5 | Yield curve inverted but VIX is low, suggesting a soft landing.
     """
     
-    response = llm.invoke([SystemMessage(content="You are a strict risk manager."), HumanMessage(content=prompt)])
+    response = llm.invoke([SystemMessage(content="You are an aggressive growth strategist. Prioritize opportunity over safety."), HumanMessage(content=prompt)])
     content = response.content.strip()
     
     # 3. LLM 응답 파싱
@@ -89,8 +93,8 @@ def macro_analysis_node(state: AgentState) -> AgentState:
         risk_score = 5.0
         reason = "Parsing failed, defaulted to Neutral."
         
-    print(f"✅ Decision: {risk_level} (Score: {risk_score})")
-    print(f"📝 Reason: {reason}")
+    print(f"Decision: {risk_level} (Score: {risk_score})")
+    print(f"Reason: {reason}")
     
     # State 업데이트
     state["market_risk"] = risk_level
